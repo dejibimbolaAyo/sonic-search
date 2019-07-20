@@ -1,5 +1,5 @@
 const appRoot = require('app-root-path');
-const mongoose = require(`${appRoot}/database/config/connection`);
+const mongoose = require(`${appRoot}/database/mongo/connection`);
 const crypt = require("../helper/crypt");
 
 var Schema = mongoose.Schema;
@@ -36,7 +36,7 @@ const userSchema = new Schema({
     language: {
         ref: 'Language',
         type: mongoose.Schema.Types.ObjectId,
-      
+
     },
     hash: {
         type: String,
@@ -49,12 +49,12 @@ const userSchema = new Schema({
         select: false
     }
 },
-{
-    timestamps: {
-        createdAt: 'created_at',
-        updatedAt: 'updated_at'
-    }
-});
+    {
+        timestamps: {
+            createdAt: 'created_at',
+            updatedAt: 'updated_at'
+        }
+    });
 
 userSchema.virtual('id').get(function () {
     return this._id;
@@ -72,12 +72,12 @@ userSchema.methods.generateSalt = (length) => {
 }
 
 userSchema.methods.hashPassword = (salt, password) => {
-    const salted = salt+password;
+    const salted = salt + password;
     return crypt.getHash(salted);
 }
 
 userSchema.methods.comparePassword = (plainPassword) => {
-    const salted = this.salt+plainPassword;
+    const salted = this.salt + plainPassword;
     return crypt.compareHash(salted, this.hash);
 };
 
