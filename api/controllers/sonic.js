@@ -63,3 +63,27 @@ exports.queryData = async (req, res) => {
   error.message = search.message;
   return response.writeJson(res, error, HTTP_STATUS.INTERNAL_SERVER_ERROR.CODE);
 }
+
+exports.suggest = async (req, res) => {
+  const { collection, query } = req.params;
+
+  if (!query || query == '') {
+    error.message = "Please provide a query for search";
+    return response.writeJson(res, error, HTTP_STATUS.NOT_FOUND.CODE)
+  }
+
+  if (!collection || collection == '') {
+    error.message = "Please provide a collection to query against";
+    return response.writeJson(res, error, HTTP_STATUS.NOT_FOUND.CODE)
+  }
+
+  const suggestions = await Sonic.suggest(collection, query);
+  if (suggestions.status) {
+    success.message = suggestions.message;
+    success.data = suggestions.data;
+    return response.writeJson(res, success, HTTP_STATUS.OK.CODE);
+  }
+
+  error.message = suggestions.message;
+  return response.writeJson(res, error, HTTP_STATUS.INTERNAL_SERVER_ERROR.CODE);
+}

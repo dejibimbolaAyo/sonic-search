@@ -50,3 +50,25 @@ exports.query = async (collection, query) => {
     data: search
   }
 }
+
+exports.suggest = async (collection, query) => {
+  const search = await sonicSearch().suggest(
+    collection,
+    'default',
+    query
+  )
+  sonicControl().close()
+    .then(function () {
+      // Close success handler
+    })
+    .catch(function (error) {
+      // Close errors come there
+      console.log(error)
+    });
+
+  return {
+    status: true,
+    message: "Search suggestions completed",
+    data: search
+  }
+}
